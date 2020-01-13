@@ -1054,11 +1054,20 @@ class Stripe_official extends PaymentModule
     }
 
     /**
+     * Returns the list of controller pages for which the stripe headers are sent
+     * @return array
+     */
+    protected function getOrderPagesNames()
+    {
+        return array('order', 'order-opc');
+    }
+
+    /**
      * Load JS on the front office order page
      */
     public function hookHeader()
     {
-        if (!in_array($this->context->controller->php_self, ['order', 'order-opc'])) {
+        if (!in_array(Tools::getvalue('controller'), $this->getOrderPagesNames())) {
             return;
         }
 
