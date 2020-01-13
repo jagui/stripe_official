@@ -1190,7 +1190,7 @@ class Stripe_official extends PaymentModule
         // on PS1.6 with OPC; so we need to update the PaymentIntent here
         $currency = new Currency($params['cart']->id_currency);
         $currency_iso_code = Tools::strtolower($currency->iso_code);
-        $address = new Address($params['cart']->id_address_invoice);
+        $customer = $this->context->customer;
         $amount = $this->context->cart->getOrderTotal();
         $amount = Tools::ps_round($amount, 2);
         $amount = $this->isZeroDecimalCurrency($currency_iso_code) ? $amount : $amount * 100;
@@ -1214,10 +1214,12 @@ class Stripe_official extends PaymentModule
             'stripe_reinsurance_enabled' => Configuration::get(self::REINSURANCE),
             'stripe_payment_methods' => $this->getPaymentMethods(),
             'module_dir' => Media::getMediaPath(_PS_MODULE_DIR_.$this->name),
-            'customer_name' => $address->firstname . ' ' . $address->lastname
+            'stripe_fullname' => $customer->firstname . ' ' . $customer->lastname,
+            'stripe_email' => $customer->email,
         ));
 
         // Fetch country based on invoice address and currency
+        $address = new Address($params['cart']->id_address_invoice);
         $country = Country::getIsoById($address->id_country);
 
         // Show only the payment methods that are relevant to the selected country and currency
