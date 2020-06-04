@@ -100,7 +100,7 @@ $(function(){
       const paymentRequest = stripe.paymentRequest({
         country: stripe_merchant_country_code,
         currency: stripe_currency,
-        total: { label: 'Total', amount: stripe_amount },
+        total: { label: 'Total', amount: Math.round(stripe_amount) },
         requestPayerEmail: true
       });
 
@@ -279,7 +279,7 @@ $(function(){
       if (payment === 'card') {
         // Let Stripe.js handle the confirmation of the PaymentIntent with the card Element.
         const response = await stripe.handleCardPayment(
-          stripe_client_secret, card, { source_data: { owner: { name: stripe_fullname } } }
+          stripe_client_secret, card, { source_data: { owner: { name: stripe_fullname, email: stripe_email } } }
         );
         handlePayment(response);
       } else if (payment === 'sepa_debit') {

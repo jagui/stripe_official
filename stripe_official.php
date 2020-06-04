@@ -194,7 +194,7 @@ class Stripe_official extends PaymentModule
     {
         $this->name = 'stripe_official';
         $this->tab = 'payments_gateways';
-        $this->version = '@version@';
+        $this->version = '2.0.8';
         $this->author = '202 ecommerce';
         $this->bootstrap = true;
         $this->display = 'view';
@@ -542,7 +542,7 @@ class Stripe_official extends PaymentModule
             }
         }
 
-        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") {
+        if (Tools::usingSecureMode()) {
             $domain = Tools::getShopDomainSsl(true, true);
         } else {
             $domain = Tools::getShopDomain(true, true);
@@ -892,7 +892,7 @@ class Stripe_official extends PaymentModule
                 }
 
                 // Check that the currency is still correct
-                if ($intent->currency != $currency) {
+                if ($intent->currency !=  Tools::strtolower($currency)) {
                     $intent->update(
                         $this->context->cookie->stripe_payment_intent,
                         array(
@@ -1054,6 +1054,15 @@ class Stripe_official extends PaymentModule
     }
 
     /**
+     * Returns the list of controller pages for which the stripe headers are sent
+     * @return array
+     */
+    protected function getOrderPagesNames()
+    {
+        return array('order', 'order-opc');
+    }
+
+    /**
      * Load JS on the front office order page
      */
     public function hookHeader()
@@ -1073,6 +1082,10 @@ class Stripe_official extends PaymentModule
         $amount = $this->context->cart->getOrderTotal();
         $amount = Tools::ps_round($amount, 2);
         $amount = $this->isZeroDecimalCurrency($currency) ? $amount : $amount * 100;
+
+        if ($amount == 0) {
+            return;
+        }
 
         // The payment intent for this order
         $intent = $this->retrievePaymentIntent($amount, $currency);
@@ -1192,7 +1205,7 @@ class Stripe_official extends PaymentModule
         // on PS1.6 with OPC; so we need to update the PaymentIntent here
         $currency = new Currency($params['cart']->id_currency);
         $currency_iso_code = Tools::strtolower($currency->iso_code);
-        $address = new Address($params['cart']->id_address_invoice);
+        $customer = $this->context->customer;
         $amount = $this->context->cart->getOrderTotal();
         $amount = Tools::ps_round($amount, 2);
         $amount = $this->isZeroDecimalCurrency($currency_iso_code) ? $amount : $amount * 100;
@@ -1216,10 +1229,12 @@ class Stripe_official extends PaymentModule
             'stripe_reinsurance_enabled' => Configuration::get(self::REINSURANCE),
             'stripe_payment_methods' => $this->getPaymentMethods(),
             'module_dir' => Media::getMediaPath(_PS_MODULE_DIR_.$this->name),
-            'customer_name' => $address->firstname . ' ' . $address->lastname
+            'stripe_fullname' => $customer->firstname . ' ' . $customer->lastname,
+            'stripe_email' => $customer->email,
         ));
 
         // Fetch country based on invoice address and currency
+        $address = new Address($params['cart']->id_address_invoice);
         $country = Country::getIsoById($address->id_country);
 
         // Show only the payment methods that are relevant to the selected country and currency

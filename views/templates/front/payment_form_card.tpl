@@ -21,6 +21,10 @@
  * @copyright Copyright (c) Stripe
  * @license   Commercial license
 *}
+<script>
+  stripe_fullname = {if isset($stripe_fullname)}'{$stripe_fullname|escape:'html':'UTF-8'}'{else}''{/if};
+  stripe_email = {if isset($stripe_email)}'{$stripe_email|escape:'htmlall':'UTF-8'}'{else}''{/if};
+</script>
 <form class="stripe-payment-form" id="stripe-card-payment">
     {if $applepay_googlepay == 'on'}
         <div id="stripe-payment-request-button"></div>
@@ -60,7 +64,7 @@
                     <label for="card-element">
                         {l s='Cardholder\'s Name' mod='stripe_official'}
                     </label><label class="required"> </label>
-                    <input name="cardholder-name" type="text"  autocomplete="off" class="stripe-name" data-stripe="name" value="{if isset($customer_name)}{$customer_name|escape:'htmlall':'UTF-8'}{/if}"/>
+                    <input name="cardholder-name" type="text"  autocomplete="off" class="stripe-name" data-stripe="name" value="{if isset($stripe_fullname)}{$stripe_fullname|escape:'htmlall':'UTF-8'}{/if}"/>
                 </div>
             {/if}
             <label for="card-element">
@@ -91,7 +95,7 @@
     {else}
         <div id="stripe-card-element" class="field"></div>
         {if isset($stripe_cardholdername_enabled) && $stripe_cardholdername_enabled == 'on'}
-            <input name="cardholder-name" type="text"  autocomplete="off" id="stripe-card-cardholdername" class="stripe-name" data-stripe="name" value="{if isset($customer_name)}{$customer_name|escape:'htmlall':'UTF-8'}{/if}"/>
+            <input name="cardholder-name" type="text"  autocomplete="off" id="stripe-card-cardholdername" class="stripe-name" data-stripe="name" value="{if isset($stripe_fullname)}{$stripe_fullname|escape:'htmlall':'UTF-8'}{/if}"/>
         {/if}
     {/if}
 
