@@ -21,10 +21,17 @@
  * @copyright Copyright (c) Stripe
  * @license   Commercial license
 *}
+<script>
+    {literal}stripe_fullname = {/literal}{if isset($stripe_fullname)}'{$stripe_fullname|escape:'html':'UTF-8'}'
+    {else}''{/if}{literal};
+    stripe_email = {/literal}{if isset($stripe_email)}'{$stripe_email|escape:'htmlall':'UTF-8'}'
+    {else}''{/if}{literal};
+    stripe_address_country_code = {/literal}{if isset($stripe_address_country_code)}'{$stripe_address_country_code|escape:'htmlall':'UTF-8'}'
+    {else}{literal}false{/literal}{/if}{literal};{/literal}
+</script>
 <form class="stripe-payment-form" id="stripe-card-payment">
     {if $applepay_googlepay == 'on'}
         <div id="stripe-payment-request-button"></div>
-
         {if isset($prestashop_version) && $prestashop_version == '1.7'}
             <div class="stripe-payment-request-button-warning modal fade">
                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -60,7 +67,7 @@
                     <label for="card-element">
                         {l s='Cardholder\'s Name' mod='stripe_official'}
                     </label><label class="required"> </label>
-                    <input name="cardholder-name" type="text"  autocomplete="off" class="stripe-name" data-stripe="name" value="{if isset($customer_name)}{$customer_name|escape:'htmlall':'UTF-8'}{/if}"/>
+                    <input name="cardholder-name" type="text"  autocomplete="off" class="stripe-name" data-stripe="name" value="{if isset($stripe_fullname)}{$stripe_fullname|escape:'htmlall':'UTF-8'}{/if}"/>
                 </div>
             {/if}
             <label for="card-element">
@@ -91,7 +98,7 @@
     {else}
         <div id="stripe-card-element" class="field"></div>
         {if isset($stripe_cardholdername_enabled) && $stripe_cardholdername_enabled == 'on'}
-            <input name="cardholder-name" type="text"  autocomplete="off" id="stripe-card-cardholdername" class="stripe-name" data-stripe="name" value="{if isset($customer_name)}{$customer_name|escape:'htmlall':'UTF-8'}{/if}"/>
+            <input name="cardholder-name" type="text"  autocomplete="off" id="stripe-card-cardholdername" class="stripe-name" data-stripe="name" value="{if isset($stripe_fullname)}{$stripe_fullname|escape:'htmlall':'UTF-8'}{/if}"/>
         {/if}
     {/if}
 
