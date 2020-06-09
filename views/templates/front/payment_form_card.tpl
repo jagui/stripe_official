@@ -22,12 +22,9 @@
  * @license   Commercial license
 *}
 <script>
-    {literal}stripe_fullname = {/literal}{if isset($stripe_fullname)}'{$stripe_fullname|escape:'html':'UTF-8'}'
-    {else}''{/if}{literal};
-    stripe_email = {/literal}{if isset($stripe_email)}'{$stripe_email|escape:'htmlall':'UTF-8'}'
-    {else}''{/if}{literal};
-    stripe_address_country_code = {/literal}{if isset($stripe_address_country_code)}'{$stripe_address_country_code|escape:'htmlall':'UTF-8'}'
-    {else}{literal}false{/literal}{/if}{literal};{/literal}
+    {if isset($stripe_fullname)}stripe_fullname = '{$stripe_fullname|escape:'html':'UTF-8'}';{/if}
+    {if isset($stripe_email)}stripe_email = '{$stripe_email|escape:'htmlall':'UTF-8'}';{/if}
+    {if isset($stripe_address_country_code)}stripe_address_country_code = '{$stripe_address_country_code|escape:'htmlall':'UTF-8'}';{/if}
 </script>
 <form class="stripe-payment-form" id="stripe-card-payment">
     {if $applepay_googlepay == 'on'}
